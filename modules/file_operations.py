@@ -32,7 +32,7 @@ def open_file():
     elif re.search(r'\.xlsx', filepath):
         # Open excel files
         try:
-            df = pd.read_excel(filepath)
+            df = dataframe_control(pd.read_excel(filepath))
             messagebox.showinfo('Info','File open success')
         except:
             messagebox.showerror('Error','Open file error.')
@@ -65,3 +65,12 @@ def file_control(path):
         return True
     except:
         return False
+
+def dataframe_control(df):
+    
+    try:
+        control = df['ASIN NO']
+        return df
+    except:
+        df = df.iloc[2::].rename(columns = {"Unnamed: 0": 'ASIN NO','Unnamed: 1': 'Kanada Price' })[:-1]
+        return df

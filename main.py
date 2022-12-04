@@ -25,7 +25,7 @@ def main():
     select_operations = Prompt.ask('Please select operation number: ', choices=['1','2','3'], default='1')
     if select_operations == '1':
         df = file_operations.open_file()
-        product_link = _scraper.create_link(ansi=df['ASIN NO'].iloc[::100])
+        product_link = _scraper.create_link(ansi=df['ASIN NO'])
         create_df = _scraper.get_data(product_link)
         merge_df = _scraper.data_merge(df1= df, df2= create_df)
         print("\n")
