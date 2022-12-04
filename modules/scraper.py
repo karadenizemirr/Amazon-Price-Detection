@@ -21,8 +21,8 @@ class Scraper:
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         options.add_experimental_option('useAutomationExtension', False)
-        #options.add_argument('--headless')
-        #options.add_argument('--disable-gpu')
+        options.add_argument('--headless')
+        options.add_argument('--enable-gpu')
         self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=options)
         
     def create_link(self, ansi =[]):
