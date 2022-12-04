@@ -21,8 +21,8 @@ class Scraper:
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option('excludeSwitches', ['enable-logging'])
         options.add_experimental_option('useAutomationExtension', False)
-        options.add_argument('--headless')
-        options.add_argument('--disable-gpu')
+        #options.add_argument('--headless')
+        #options.add_argument('--disable-gpu')
         self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), chrome_options=options)
         
     def create_link(self, ansi =[]):
@@ -67,6 +67,8 @@ class Scraper:
                     "Link": link,
                     "Status": status
                 })
+
+                print(price)
             self.console.log('Created data', style="bold green")
         df = pd.DataFrame(create_data)
         return df
