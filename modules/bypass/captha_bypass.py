@@ -20,4 +20,5 @@ def amazon_bypass(link=None):
     if str(html).find("you're not a robot") > 0:
         pass
     else:
+        chrome_driver.close()
         return html
