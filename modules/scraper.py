@@ -56,18 +56,12 @@ class Scraper:
         for l in links:
             processes.append(Process(target=self._get_link, args=(l,), daemon=True))
         
-        with Progress() as progress:
-            pbar = progress.add_task('[yellow]Started modules..[/yellow]', total=len(processes))
-            for process in processes:
-                process.start()
-                data.append(self.Q.get())
-                progress.update(pbar, advance=1)
-        
-        with Progress() as progress:
-            pbar = progress.add_task('Get detail..', total=len(processes))
-            for process in processes:
-                process.join()
-                progress.update(pbar, advance=1)
+        for process in processes:
+            process.start()
+            data.append(self.Q.get())
+    
+        for process in processes:
+            process.join()
         
         self.console.log('\nGet detail operations end.\n', style="bold green")
         df = pd.DataFrame(data)
