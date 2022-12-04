@@ -2,10 +2,9 @@ import requests
 import re
 import numpy as np
 import pandas as pd
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 from rich.console import Console
 from fake_useragent import UserAgent
-from threading import Thread
 from bs4 import BeautifulSoup
 from modules.bypass import captha_bypass
 from rich.progress import Progress
@@ -15,7 +14,6 @@ class Scraper:
     def __init__(self):
         self.console = Console()
         self.session = requests.Session()
-        self.Q = Queue()
         self.ua = UserAgent(browsers=['edge', 'chrome'])
         self.headers = {
             "User-Agent": self.ua.random,
@@ -44,15 +42,15 @@ class Scraper:
         price = self.get_price(html)
         status = self.get_status(html)
 
-        self.Q.put({
+        data = {
             "Usa Price": str(price).strip(),
             "Title": str(title).strip(),
             "Status": str(status).strip(),
             "Link": link,
-        })
+        }
 
     def get_link(self, links = []):
-        data = []
+
         processes = []
         for l in links:
             processes.append(Process(target=self._get_link, args=(l,), daemon=True))
@@ -67,13 +65,9 @@ class Scraper:
             pbar = progress.add_task('Get detail..', total=len(processes))
             for process in processes:
                 process.join()
-                data.append(self.Q.get())
                 progress.update(pbar, advance=1)
-            
         
         self.console.log('\nGet detail operations end.\n', style="bold green")
-        df = pd.DataFrame(data)
-        return df
 
     def get_title(self, soup):
         try:

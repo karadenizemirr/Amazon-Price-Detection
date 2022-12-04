@@ -31,12 +31,12 @@ def main():
         df = file_operations.open_file()
 
         # Create Links
-        links = _scraper.create_link(asin=df['ASIN NO'][:200])
+        links = _scraper.create_link(asin=df['ASIN NO'][:10])
         #Links Scraper
         result = _scraper.get_link(links=links)
 
         #Merge df
-        merge_df = _scraper.merge_df(df1=df, df2=result)
+        merge_df = None #_scraper.merge_df(df1=df, df2=result)
 
         #Save Df
         save_questions = Prompt.ask('Do you want to save the file: ', choices=['y','n'], default='y')
