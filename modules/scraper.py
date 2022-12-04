@@ -1,5 +1,6 @@
 import requests
 import re
+import numpy as np
 import pandas as pd
 from multiprocessing import Process, Queue
 from rich.console import Console
@@ -8,7 +9,7 @@ from threading import Thread
 from bs4 import BeautifulSoup
 from modules.bypass import captha_bypass
 from rich.progress import Progress
-
+from modules import file_operations
 
 class Scraper:
     def __init__(self):
@@ -54,7 +55,7 @@ class Scraper:
         data = []
         processes = []
         for l in links:
-            processes.append(Process(target=self._get_link, args=(l,)))
+            processes.append(Process(target=self._get_link, args=(l,), daemon=True))
         
         with Progress() as progress:
             pbar = progress.add_task('[yellow]Started modules..[/yellow]', total=len(processes))
@@ -68,6 +69,7 @@ class Scraper:
                 process.join()
                 data.append(self.Q.get())
                 progress.update(pbar, advance=1)
+            
         
         self.console.log('\nGet detail operations end.\n', style="bold green")
         df = pd.DataFrame(data)
@@ -105,3 +107,21 @@ class Scraper:
         df = pd.concat(merge, axis=1)
 
         return df
+    
+    def data_info(self):
+        df = file_operations.open_file()
+
+        df = df[:200]
+        df['Usa Price'].replace('None',np.nan, inplace=True)   
+        # All Null Values
+        all_null = df.isnull().sum()
+        print('\n\n')
+        self.console.print('All null values')
+        self.console.print(all_null)
+
+        # Diffrence
+        difference = len(df) - df['Usa Price'].isna().sum()
+        A = len(df)
+        B = difference
+        percent = abs((B - A) / B) * 100
+        self.console.print(f'Total Detect Price: {difference} Percent: {"%.2f" % percent}')

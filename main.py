@@ -31,7 +31,7 @@ def main():
         df = file_operations.open_file()
 
         # Create Links
-        links = _scraper.create_link(asin=df['ASIN NO'])
+        links = _scraper.create_link(asin=df['ASIN NO'][:200])
         #Links Scraper
         result = _scraper.get_link(links=links)
 
@@ -46,9 +46,10 @@ def main():
             console.print(merge_df)
 
     elif select_operations == '2':
-        pass
+        _scraper.data_info()
     elif select_operations == '3':
-        pass
+        quit()
 
 if __name__ == '__main__':  
-    main()
+    while True:
+        main()
