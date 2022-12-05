@@ -1,5 +1,5 @@
 from modules import scraper
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 
 class GetData(scraper.Scraper):
     def __init__(self, data):
@@ -17,3 +17,5 @@ class GetData(scraper.Scraper):
 
         for proc in self.procs:
             proc.join()
+        
+        return self.Q.get()
