@@ -2,19 +2,14 @@ import requests
 import re
 import numpy as np
 import pandas as pd
-from multiprocessing import Process, Queue
 from rich.console import Console
 from fake_useragent import UserAgent
-from bs4 import BeautifulSoup
-from modules.bypass import captha_bypass
-from rich.progress import Progress
 from modules import file_operations
 
 class Scraper:
     def __init__(self):
         self.console = Console()
         self.session = requests.Session()
-        self.Q = Queue()
         self.ua = UserAgent(browsers=['edge', 'chrome'])
         self.headers = {
             "User-Agent": self.ua.random,
@@ -31,41 +26,6 @@ class Scraper:
                 craete_link.append(f"{self.base_url}/dp/{a}".strip())
             self.console.log('Cretead links.')
         return craete_link
-
-    def _get_link(self, link):
-        req = self.session.get(link, headers=self.headers)
-        html = BeautifulSoup(req.text , 'lxml')
-
-        if req.text.find("you're not a robot") > 0:
-            html = captha_bypass.amazon_bypass(link=link)
-        
-        title = self.get_title(html)
-        price = self.get_price(html)
-        status = self.get_status(html)
-
-        self.Q.put({
-            "Usa Price": str(price).strip(),
-            "Title": str(title).strip(),
-            "Status": str(status).strip(),
-            "Link": link,
-        })
-
-    def get_link(self, links = []):
-        data = []
-        processes = []
-        for l in links:
-            processes.append(Process(target=self._get_link, args=(l,), daemon=True))
-        
-        for process in processes:
-            process.start()
-            data.append(self.Q.get())
-    
-        for process in processes:
-            process.join()
-        
-        self.console.log('\nGet detail operations end.\n', style="bold green")
-        df = pd.DataFrame(data)
-        return df
 
     def get_title(self, soup):
         try:
