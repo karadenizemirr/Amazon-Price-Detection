@@ -3,7 +3,7 @@ import re
 import numpy as np
 import pandas as pd
 import queue
-from threading import Thread
+from multiprocessing import Process
 from rich.console import Console
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
@@ -55,7 +55,7 @@ class Scraper:
         data = []
         processes = []
         for l in links:
-            processes.append(Thread(target=self._get_link, args=(l,), daemon=True))
+            processes.append(Process(target=self._get_link, args=(l,), daemon=True))
         
         with Progress() as progress:
             pbar = progress.add_task('[yellow]Started modules..[/yellow]', total=len(processes))
