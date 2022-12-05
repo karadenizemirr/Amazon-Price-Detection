@@ -1,6 +1,6 @@
 import pandas as pd
 from modules import scraper
-from multiprocessing import Process, Queue
+from threading import Thread
 from rich.progress import Progress
 
 class GetData(scraper.Scraper):
@@ -8,7 +8,6 @@ class GetData(scraper.Scraper):
         super().__init__()
         self.data = data
         self.procs = []
-        self.run()
 
     def run(self):
         create_new_data = []
@@ -16,7 +15,7 @@ class GetData(scraper.Scraper):
         with Progress() as progress:
             pbar = progress.add_task('[blue]Start modules..[/blue]', total=len(self.data))
             for d in self.data:
-                proc = Process(target=self._get_link, args=(d,))
+                proc = Thread(target=self._get_link, args=(d,))
                 self.procs.append(proc)
                 proc.start()
                 create_new_data.append(self.Q.get())
@@ -28,5 +27,5 @@ class GetData(scraper.Scraper):
                 proc.join()
                 progress.update(pbar1, advance=1)
         
-        new_data_frame = pd.DataFrame(create_new_data)
-        return new_data_frame   
+        df = pd.DataFrame(create_new_data)
+        return df

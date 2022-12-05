@@ -2,20 +2,18 @@ import requests
 import re
 import numpy as np
 import pandas as pd
-from threading import Thread
-from multiprocessing import Queue
+import queue
 from rich.console import Console
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 from modules.bypass import captha_bypass
-from rich.progress import Progress
 from modules import file_operations
 
 class Scraper:
     def __init__(self):
         self.console = Console()
         self.session = requests.Session()
-        self.Q = Queue()
+        self.Q = queue.Queue()
         self.ua = UserAgent(browsers=['edge', 'chrome'])
         self.headers = {
             "User-Agent": self.ua.random,
@@ -60,7 +58,7 @@ class Scraper:
         return title
     
     def get_price(self, soup):
-        class_name = ['a-price a-text-price', 'a-size-mini olpWrapper', 'a-price', 'a-size-mini olpMessageWrapper']
+        class_name = ['a-price a-text-price', 'a-size-mini olpWrapper', 'a-price', 'a-size-mini olpMessageWrapper', 'a-price aok-align-center']
         for c in class_name:
             if len(soup.findAll('span', {'class': c})) > 0:
                 price = soup.findAll('span', {'class': c})[0].text
@@ -74,6 +72,8 @@ class Scraper:
             status = "Currently unavailable."
         elif str(soup).find("Sorry! We couldn't find that page.") > 1:
             status = "Product Not Found"
+        elif str(soup).find("Temporarily out of stock.")> 1:
+            status = "Temporarily out of stock."
         else: 
             status = 'Product Found'
         return status
