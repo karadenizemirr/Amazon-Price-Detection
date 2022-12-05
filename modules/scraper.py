@@ -50,7 +50,6 @@ class Scraper:
             "Status": str(status).strip(),
             "Link": link,
         })
-        print(title)
 
     def get_title(self, soup):
         try:

@@ -35,7 +35,7 @@ def main():
         links = _scraper.create_link(asin=df['ASIN NO'][:200])
         #Links Scraper
         result = get_data.GetData(data=links)
-
+        print(result)
         # #Merge df
         # merge_df = _scraper.merge_df(df1=df, df2=result)
 
