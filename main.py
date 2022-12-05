@@ -32,7 +32,7 @@ def main():
         df = file_operations.open_file()
 
         # Create Links
-        links = _scraper.create_link(asin=df['ASIN NO'][:10])
+        links = _scraper.create_link(asin=df['ASIN NO'][:500])
         #Links Scraper
         result = get_data.GetData(data=links).run()
         #Merge df
