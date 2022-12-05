@@ -2,8 +2,6 @@ from rich.console import Console
 from modules import scraper
 from rich.prompt import Prompt
 from modules import file_operations
-from modules import get_data
-
 console = Console()
 _scraper = scraper.Scraper()
 
@@ -29,22 +27,22 @@ def main():
 
     if select_operations == '1':
         # Open Excel File
-        df = file_operations.open_file()[:200]
+        df = file_operations.open_file()
 
         # Create Links
-        links = _scraper.create_link(asin=df['ASIN NO'])
+        links = _scraper.create_link(asin=df['ASIN NO'][:200])
         #Links Scraper
-        result = get_data.DataGenerator(links=links)
+        result = _scraper.get_link(links=links)
 
         #Merge df
-        # merge_df = _scraper.merge_df(df1=df, df2=result)
+        merge_df = _scraper.merge_df(df1=df, df2=result)
 
-        # #Save Df
-        # save_questions = Prompt.ask('Do you want to save the file: ', choices=['y','n'], default='y')
-        # if save_questions == 'y':
-        #     file_operations.save_file(merge_df)
-        # elif save_questions == 'n':
-        #     console.print(merge_df)
+        #Save Df
+        save_questions = Prompt.ask('Do you want to save the file: ', choices=['y','n'], default='y')
+        if save_questions == 'y':
+            file_operations.save_file(merge_df)
+        elif save_questions == 'n':
+            console.print(merge_df)
 
     elif select_operations == '2':
         _scraper.data_info()
