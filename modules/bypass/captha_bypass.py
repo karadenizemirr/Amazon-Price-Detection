@@ -19,6 +19,7 @@ def amazon_bypass(link=None):
     html = BeautifulSoup(chrome_driver.page_source, 'lxml')
     
     if str(html).find("you're not a robot") > 0:
+        print("burada")
         # Bypass Captha
         _input = '//*[@id="captchacharacters"]'
         _button = '/html/body/div/div[1]/div[3]/div/div/form/div[2]/div/span/span/button'
